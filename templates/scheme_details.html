@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}{{ scheme.name }} - Details - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding bg-light-blue" style="background-color: #F0F6FC; padding-top: 100px; padding-bottom: 50px;">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('schemes') }}">Schemes</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ scheme.name }}</li>
+            </ol>
+        </nav>
+        
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mt-4">
+            <div>
+                <span class="badge bg-primary mb-2">{{ scheme.category }}</span>
+                <h1 class="display-6 fw-bold">{{ scheme.name }}</h1>
+                <p class="text-secondary"><i class="fas fa-landmark me-2"></i>{{ scheme.department }} | <strong>{{ scheme.type }} Scheme</strong></p>
+            </div>
+            <div class="d-flex gap-2">
+                <!-- Bookmark -->
+                {% set is_bookmarked = false %}
+                {% if bookmarked_ids and scheme.id in bookmarked_ids %}
+                    {% set is_bookmarked = true %}
+                {% endif %}
+                <button class="btn btn-outline-custom bookmark-btn {% if is_bookmarked %}active{% endif %}" data-scheme-id="{{ scheme.id }}">
+                    <i class="{% if is_bookmarked %}fas fa-bookmark text-primary{% else %}far fa-bookmark{% endif %} me-2"></i>Bookmark
+                </button>
+                <a href="https://api.whatsapp.com/send?text=Check out the {{ scheme.name }} scheme on SchemeAI! Apply here: {{ scheme.official_link }}" target="_blank" class="btn btn-outline-success text-success border-success" title="Share on WhatsApp" style="border-radius:50%; width:45px; height:45px; display:flex; align-items:center; justify-content:center;">
+                    <i class="fab fa-whatsapp fa-lg"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Main Content Area -->
+            <div class="col-lg-8">
+                <!-- Scheme Image and Description -->
+                <div class="card-custom p-4 bg-white mb-4">
+                    <h4 class="mb-3">Scheme Overview</h4>
+                    <p class="text-secondary" style="font-size: 16px; line-height: 1.8;">{{ scheme.description }}</p>
+                </div>
+                
+                <!-- Scheme Benefits -->
+                <div class="card-custom p-4 bg-white mb-4">
+                    <h4 class="mb-3"><i class="fas fa-hand-holding-usd me-2 text-success"></i>Benefits and Coverage</h4>
+                    <div class="p-3 bg-light rounded text-secondary" style="font-size: 15px;">
+                        {{ scheme.benefits }}
+                    </div>
+                </div>
+
+                <!-- Required Documents Checklist -->
+                <div class="card-custom p-4 bg-white">
+                    <h4 class="mb-3"><i class="fas fa-file-alt me-2 text-primary"></i>Required Application Documents</h4>
+                    <p class="text-secondary small">Make sure you possess valid, updated copies of the following documents before visiting the official portal:</p>
+                    <ul class="list-group list-group-flush mt-3">
+                        {% for doc in scheme.required_documents.split(',') %}
+                            <li class="list-group-item bg-transparent d-flex align-items-center gap-2">
+                                <i class="fas fa-check text-success"></i>
+                                <span class="text-secondary">{{ doc.strip() }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="mt-3">
+                        <a href="{{ url_for('documents') }}" class="small text-primary"><i class="fas fa-arrow-right me-1"></i>View documents guidelines page</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side constraints details -->
+            <div class="col-lg-4">
+                <div class="card-custom p-4 bg-light border-0 mb-4">
+                    <h5 class="fw-bold mb-4">Criteria Parameters</h5>
+                    
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-secondary">Min Age Target</span>
+                            <strong class="text-dark">{{ scheme.min_age }} Years</strong>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-secondary">Max Age Target</span>
+                            <strong class="text-dark">{% if scheme.max_age >= 100 %}None{% else %}{{ scheme.max_age }} Years{% endif %}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-secondary">Gender Target</span>
+                            <strong class="text-dark">{{ scheme.gender_target }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-secondary">Max Annual Income</span>
+                            <strong class="text-dark">
+                                {% if scheme.max_income >= 10000000 %}
+                                    No Limit
+                                {% else %}
+                                    ₹{{ scheme.max_income|int }}
+                                {% endif %}
+                            </strong>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-secondary">Occupation Limit</span>
+                            <strong class="text-dark">{{ scheme.occupation_target }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-secondary">State Restriction</span>
+                            <strong class="text-dark">{{ scheme.state }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2">
+                            <span class="text-secondary">Disability Needed?</span>
+                            <strong class="text-dark">{{ scheme.disability_required }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between pb-2">
+                            <span class="text-secondary">BPL Card Needed?</span>
+                            <strong class="text-dark">{{ scheme.bpl_required }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Apply Actions card -->
+                <div class="card-custom p-4 bg-white text-center">
+                    <h5 class="fw-bold mb-3">Ready to Apply?</h5>
+                    <p class="text-secondary small mb-4">You can test if you satisfy the criteria conditions right here on SchemeAI before applying.</p>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('eligibility') }}?scheme_id={{ scheme.id }}" class="btn btn-outline-custom">Check My Eligibility</a>
+                        <a href="{{ scheme.official_link }}" target="_blank" class="btn btn-primary-custom">
+                            <i class="fas fa-external-link-alt me-2"></i>Apply via Official Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

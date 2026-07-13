@@ -1,0 +1,17 @@
+# Python compilation caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# SQLite local databases
+database/schemeai.db
+instance/
+
+# OS specific files
+.DS_Store
+Thumbs.db

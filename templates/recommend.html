@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}AI Recommendation Wizard - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding bg-light-blue" style="background-color: #F0F6FC; padding-top: 100px; padding-bottom: 50px;">
+    <div class="container text-center">
+        <h1 class="fw-bold mb-2">AI Scheme Recommendation</h1>
+        <p class="text-secondary col-md-6 mx-auto">Fill out our intelligent multi-step form to let our trained Random Forest model predict and rank welfare schemes for your profile.</p>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <!-- Main Form Container -->
+        <div class="card-custom col-lg-8 mx-auto p-4 bg-white" id="wizard-form-container">
+            
+            <!-- Step Indicators -->
+            <div class="step-indicator-container">
+                <div class="step-dot active" data-step="1">1</div>
+                <div class="step-dot" data-step="2">2</div>
+                <div class="step-dot" data-step="3">3</div>
+            </div>
+
+            <form id="recommendation-wizard-form" novalidate>
+                
+                <!-- Step 1: Personal Profile -->
+                <div class="form-step active" data-step="1">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-user me-2"></i>Step 1: Personal Profile</h4>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Full Name *</label>
+                            <input type="text" name="name" class="form-control-custom" placeholder="Enter your full name" required 
+                                   value="{{ user.name if user else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Age (Years) *</label>
+                            <input type="number" name="age" class="form-control-custom" placeholder="e.g. 25" min="1" max="120" required
+                                   value="{{ user.age if user and user.age else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Gender *</label>
+                            <select name="gender" class="form-select form-control-custom" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male" {% if user and user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if user and user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if user and user.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Family Size (Persons) *</label>
+                            <input type="number" name="family_size" class="form-control-custom" placeholder="e.g. 4" min="1" max="20" required
+                                   value="{{ user.family_size if user and user.family_size else '4' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">State Residence *</label>
+                            <select name="state" class="form-select form-control-custom" required>
+                                <option value="">Select State</option>
+                                <option value="Maharashtra" {% if user and user.state == 'Maharashtra' %}selected{% endif %}>Maharashtra</option>
+                                <option value="Delhi" {% if user and user.state == 'Delhi' %}selected{% endif %}>Delhi</option>
+                                <option value="Punjab" {% if user and user.state == 'Punjab' %}selected{% endif %}>Punjab</option>
+                                <option value="Gujarat" {% if user and user.state == 'Gujarat' %}selected{% endif %}>Gujarat</option>
+                                <option value="Karnataka" {% if user and user.state == 'Karnataka' %}selected{% endif %}>Karnataka</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">District *</label>
+                            <input type="text" name="district" class="form-control-custom" placeholder="Enter district name" required
+                                   value="{{ user.district if user and user.district else '' }}">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                        <button type="button" class="btn btn-primary-custom next-step">Next Step <i class="fas fa-arrow-right ms-2"></i></button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Socio-Economic Profile -->
+                <div class="form-step" data-step="2">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-briefcase me-2"></i>Step 2: Socio-Economic Profile</h4>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Primary Occupation *</label>
+                            <select name="occupation" class="form-select form-control-custom" required>
+                                <option value="">Select Occupation</option>
+                                <option value="Student" {% if user and user.occupation == 'Student' %}selected{% endif %}>Student</option>
+                                <option value="Farmer" {% if user and user.occupation == 'Farmer' %}selected{% endif %}>Farmer</option>
+                                <option value="Business Owner" {% if user and user.occupation == 'Business Owner' %}selected{% endif %}>Business Owner</option>
+                                <option value="Unemployed" {% if user and user.occupation == 'Unemployed' %}selected{% endif %}>Unemployed</option>
+                                <option value="Private Job" {% if user and user.occupation == 'Private Job' %}selected{% endif %}>Private Sector Job</option>
+                                <option value="Government Job" {% if user and user.occupation == 'Government Job' %}selected{% endif %}>Government Job</option>
+                                <option value="Retired" {% if user and user.occupation == 'Retired' %}selected{% endif %}>Retired</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Employment Status *</label>
+                            <select name="employment_status" class="form-select form-control-custom" required>
+                                <option value="">Select Status</option>
+                                <option value="Student" {% if user and user.employment_status == 'Student' %}selected{% endif %}>Student</option>
+                                <option value="Farmer" {% if user and user.employment_status == 'Farmer' %}selected{% endif %}>Farmer</option>
+                                <option value="Business Owner" {% if user and user.employment_status == 'Business Owner' %}selected{% endif %}>Self-Employed (Business)</option>
+                                <option value="Employed" {% if user and user.employment_status == 'Employed' %}selected{% endif %}>Employed (Job)</option>
+                                <option value="Unemployed" {% if user and user.employment_status == 'Unemployed' %}selected{% endif %}>Unemployed</option>
+                                <option value="Retired" {% if user and user.employment_status == 'Retired' %}selected{% endif %}>Retired</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Annual Household Income (₹) *</label>
+                            <input type="number" name="income" class="form-control-custom" placeholder="Enter annual income in INR" min="0" required
+                                   value="{{ user.income|int if user and user.income else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Education Level *</label>
+                            <select name="education" class="form-select form-control-custom" required>
+                                <option value="">Select Education</option>
+                                <option value="Below 10th" {% if user and user.education == 'Below 10th' %}selected{% endif %}>Below 10th Standard</option>
+                                <option value="10th Pass" {% if user and user.education == '10th Pass' %}selected{% endif %}>10th Standard Pass</option>
+                                <option value="12th Pass" {% if user and user.education == '12th Pass' %}selected{% endif %}>12th Standard Pass (Intermediate)</option>
+                                <option value="Graduate" {% if user and user.education == 'Graduate' %}selected{% endif %}>Graduate Degree (B.Sc, B.A, B.Tech, etc)</option>
+                                <option value="Postgraduate" {% if user and user.education == 'Postgraduate' %}selected{% endif %}>Postgraduate Degree (M.Sc, M.Tech, MBA, etc)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Economic Card Class (APL/BPL) *</label>
+                            <select name="bpl_status" class="form-select form-control-custom" required>
+                                <option value="No" {% if user and user.bpl_status == 'No' %}selected{% endif %}>APL (Above Poverty Line / None)</option>
+                                <option value="Yes" {% if user and user.bpl_status == 'Yes' %}selected{% endif %}>BPL (Below Poverty Line / Antyodaya)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Residential Zone *</label>
+                            <select name="residential_zone" class="form-select form-control-custom" required>
+                                <option value="Rural">Rural Area (Village)</option>
+                                <option value="Urban">Urban Area (Town/City)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                        <button type="button" class="btn btn-outline-custom prev-step"><i class="fas fa-arrow-left me-2"></i> Back</button>
+                        <button type="button" class="btn btn-primary-custom next-step">Next Step <i class="fas fa-arrow-right ms-2"></i></button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Social & Health Markers -->
+                <div class="form-step" data-step="3">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-users me-2"></i>Step 3: Social & Health Markers</h4>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Social Reservation Category *</label>
+                            <select name="category" class="form-select form-control-custom" required>
+                                <option value="">Select Category</option>
+                                <option value="General" {% if user and user.category == 'General' %}selected{% endif %}>General / Unreserved</option>
+                                <option value="OBC" {% if user and user.category == 'OBC' %}selected{% endif %}>OBC (Other Backward Classes)</option>
+                                <option value="SC" {% if user and user.category == 'SC' %}selected{% endif %}>SC (Scheduled Castes)</option>
+                                <option value="ST" {% if user and user.category == 'ST' %}selected{% endif %}>ST (Scheduled Tribes)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Religion (Optional)</label>
+                            <select name="religion" class="form-select form-control-custom">
+                                <option value="Hindu">Hinduism</option>
+                                <option value="Muslim">Islam</option>
+                                <option value="Christian">Christianity</option>
+                                <option value="Sikh">Sikhism</option>
+                                <option value="Buddhist">Buddhism</option>
+                                <option value="Jain">Jainism</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Disability Status (Divyangjan) *</label>
+                            <select name="disability_status" class="form-select form-control-custom" required>
+                                <option value="No" {% if user and user.disability_status == 'No' %}selected{% endif %}>No (Specially abled: No)</option>
+                                <option value="Yes" {% if user and user.disability_status == 'Yes' %}selected{% endif %}>Yes (Specially abled: Yes)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Marital Status *</label>
+                            <select name="marital_status" class="form-select form-control-custom" required>
+                                <option value="Unmarried">Unmarried</option>
+                                <option value="Married">Married</option>
+                                <option value="Widowed">Widowed</option>
+                                <option value="Divorced">Divorced</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Boolean toggles for target schemes -->
+                        <div class="col-md-6 d-flex align-items-center">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="minority_status" id="minority_status" value="Yes">
+                                <label class="form-check-label fw-bold small text-secondary" for="minority_status">Belong to Minority Community?</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-center">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="widow_status" id="widow_status" value="Yes">
+                                <label class="form-check-label fw-bold small text-secondary" for="widow_status">Is Widow / Destitute?</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                        <button type="button" class="btn btn-outline-custom prev-step"><i class="fas fa-arrow-left me-2"></i> Back</button>
+                        <button type="submit" class="btn btn-primary-custom"><i class="fas fa-magic me-2"></i> Get AI Recommendations</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Target AJAX results container -->
+        <div id="recommendation-results" class="mt-4" style="display: none;"></div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/recommend.js') }}"></script>
+{% endblock %}

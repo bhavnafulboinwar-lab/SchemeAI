@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Government Schemes Directory - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding bg-light-blue" style="background-color: #F0F6FC; padding-top: 100px; padding-bottom: 50px;">
+    <div class="container">
+        <h1 class="text-center fw-bold mb-3">Government Schemes Directory</h1>
+        <p class="text-center text-secondary col-md-6 mx-auto mb-4">Browse and search through all central and state welfare programs. Apply filter parameters to find matches.</p>
+        
+        <!-- Global Search bar in Directory -->
+        <form action="{{ url_for('schemes') }}" method="GET" class="col-md-8 mx-auto">
+            <!-- Retain current filters during search -->
+            {% if selected_type %}<input type="hidden" name="type" value="{{ selected_type }}">{% endif %}
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+            {% if selected_occupation %}<input type="hidden" name="occupation" value="{{ selected_occupation }}">{% endif %}
+            {% if selected_state %}<input type="hidden" name="state" value="{{ selected_state }}">{% endif %}
+            {% if selected_gender %}<input type="hidden" name="gender" value="{{ selected_gender }}">{% endif %}
+            {% if selected_income %}<input type="hidden" name="income" value="{{ selected_income }}">{% endif %}
+            
+            <div class="search-box-container bg-white border">
+                <i class="fas fa-search text-secondary ms-2"></i>
+                <input type="text" name="search" id="directory-search" placeholder="Search by scheme name or keywords..." value="{{ search_query or '' }}">
+                <button type="button" class="voice-search-btn" data-target="directory-search" title="Voice Search">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button type="submit" class="btn btn-primary-custom px-4 ms-2">Search</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3">
+                <div class="card-custom p-4 bg-light border-0">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-sliders-h me-2 text-primary"></i>Filters</h5>
+                        <a href="{{ url_for('schemes') }}" class="text-secondary small text-decoration-underline">Clear All</a>
+                    </div>
+                    
+                    <form action="{{ url_for('schemes') }}" method="GET">
+                        <!-- Keep search query if present -->
+                        {% if search_query %}<input type="hidden" name="search" value="{{ search_query }}">{% endif %}
+                        
+                        <!-- Scheme Type -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary">Scheme Type</label>
+                            <select name="type" class="form-select form-control-custom py-2" onchange="this.form.submit()">
+                                <option value="" {% if not selected_type %}selected{% endif %}>All Types</option>
+                                <option value="Central" {% if selected_type == 'Central' %}selected{% endif %}>Central Schemes</option>
+                                <option value="State" {% if selected_type == 'State' %}selected{% endif %}>State Schemes</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary">Category</label>
+                            <select name="category" class="form-select form-control-custom py-2" onchange="this.form.submit()">
+                                <option value="" {% if not selected_category %}selected{% endif %}>All Categories</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.name }}" {% if selected_category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- State Selection -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary">State Context</label>
+                            <select name="state" class="form-select form-control-custom py-2" onchange="this.form.submit()">
+                                <option value="" {% if not selected_state %}selected{% endif %}>All States</option>
+                                <option value="Maharashtra" {% if selected_state == 'Maharashtra' %}selected{% endif %}>Maharashtra</option>
+                                <option value="Delhi" {% if selected_state == 'Delhi' %}selected{% endif %}>Delhi</option>
+                                <option value="Punjab" {% if selected_state == 'Punjab' %}selected{% endif %}>Punjab</option>
+                                <option value="Gujarat" {% if selected_state == 'Gujarat' %}selected{% endif %}>Gujarat</option>
+                                <option value="Karnataka" {% if selected_state == 'Karnataka' %}selected{% endif %}>Karnataka</option>
+                            </select>
+                        </div>
+
+                        <!-- Occupation -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary">Target Occupation</label>
+                            <select name="occupation" class="form-select form-control-custom py-2" onchange="this.form.submit()">
+                                <option value="" {% if not selected_occupation %}selected{% endif %}>All Occupations</option>
+                                <option value="Farmer" {% if selected_occupation == 'Farmer' %}selected{% endif %}>Farmer</option>
+                                <option value="Student" {% if selected_occupation == 'Student' %}selected{% endif %}>Student</option>
+                                <option value="Business Owner" {% if selected_occupation == 'Business Owner' %}selected{% endif %}>Business Owner</option>
+                                <option value="Unemployed" {% if selected_occupation == 'Unemployed' %}selected{% endif %}>Unemployed</option>
+                            </select>
+                        </div>
+
+                        <!-- Gender Target -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary">Gender Target</label>
+                            <select name="gender" class="form-select form-control-custom py-2" onchange="this.form.submit()">
+                                <option value="" {% if not selected_gender %}selected{% endif %}>All Genders</option>
+                                <option value="All" {% if selected_gender == 'All' %}selected{% endif %}>Target All</option>
+                                <option value="Female" {% if selected_gender == 'Female' %}selected{% endif %}>Female Specific</option>
+                            </select>
+                        </div>
+
+                        <!-- Annual Income Cap -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary">Max Annual Income</label>
+                            <select name="income" class="form-select form-control-custom py-2" onchange="this.form.submit()">
+                                <option value="" {% if not selected_income %}selected{% endif %}>No Limit</option>
+                                <option value="50000" {% if selected_income == '50000' %}selected{% endif %}>Under ₹50,000</option>
+                                <option value="250000" {% if selected_income == '250000' %}selected{% endif %}>Under ₹2.5 Lakhs</option>
+                                <option value="600000" {% if selected_income == '600000' %}selected{% endif %}>Under ₹6.0 Lakhs</option>
+                                <option value="1800000" {% if selected_income == '1800000' %}selected{% endif %}>Under ₹18.0 Lakhs</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Schemes List -->
+            <div class="col-lg-9">
+                <!-- Sorting & Top Options -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <p class="mb-0 text-secondary">Showing <strong>{{ schemes|length }}</strong> schemes</p>
+                    <form action="{{ url_for('schemes') }}" method="GET" class="d-flex align-items-center gap-2">
+                        <!-- Keep search and active filters -->
+                        {% if search_query %}<input type="hidden" name="search" value="{{ search_query }}">{% endif %}
+                        {% if selected_type %}<input type="hidden" name="type" value="{{ selected_type }}">{% endif %}
+                        {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+                        {% if selected_occupation %}<input type="hidden" name="occupation" value="{{ selected_occupation }}">{% endif %}
+                        {% if selected_state %}<input type="hidden" name="state" value="{{ selected_state }}">{% endif %}
+                        {% if selected_gender %}<input type="hidden" name="gender" value="{{ selected_gender }}">{% endif %}
+                        {% if selected_income %}<input type="hidden" name="income" value="{{ selected_income }}">{% endif %}
+                        
+                        <span class="small text-secondary fw-bold text-nowrap">Sort By</span>
+                        <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="name_asc" {% if sort_by == 'name_asc' %}selected{% endif %}>A to Z</option>
+                            <option value="name_desc" {% if sort_by == 'name_desc' %}selected{% endif %}>Z to A</option>
+                            <option value="category" {% if sort_by == 'category' %}selected{% endif %}>Category</option>
+                        </select>
+                    </form>
+                </div>
+
+                <!-- Scheme Cards Grid -->
+                {% if schemes|length == 0 %}
+                    <div class="card-custom text-center py-5">
+                        <i class="fas fa-search-minus fa-3x text-secondary mb-3"></i>
+                        <h4>No Schemes Found Matching Filters</h4>
+                        <p class="text-secondary">Try widening your search terms or clearing active sidebar filters.</p>
+                        <a href="{{ url_for('schemes') }}" class="btn btn-primary-custom mt-3">Reset Directory</a>
+                    </div>
+                {% else %}
+                    <div class="row g-4">
+                        {% for scheme in schemes %}
+                            <div class="col-md-6 col-xl-4">
+                                <div class="card-custom scheme-card bg-white">
+                                    <span class="scheme-card-tag">{{ scheme.category }}</span>
+                                    <h4 class="mb-2 text-truncate-2" title="{{ scheme.name }}">{{ scheme.name }}</h4>
+                                    <p class="text-muted small mb-3">{{ scheme.department }}</p>
+                                    <p class="text-secondary flex-grow-1 small">{{ scheme.description[:120] }}...</p>
+                                    
+                                    <div class="scheme-card-meta mb-3 pt-3 border-top">
+                                        <span><i class="fas fa-map-marker-alt me-1"></i> {{ scheme.state }}</span>
+                                        <span><i class="fas fa-rupee-sign me-1"></i> Max Inc: {% if scheme.max_income >= 10000000 %}None{% else %}₹{{ scheme.max_income|int }}{% endif %}</span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                                        <!-- Bookmark Button -->
+                                        {% set is_bookmarked = false %}
+                                        {% if bookmarked_ids and scheme.id in bookmarked_ids %}
+                                            {% set is_bookmarked = true %}
+                                        {% endif %}
+                                        <button class="btn btn-outline-custom p-2 bookmark-btn {% if is_bookmarked %}active{% endif %}" data-scheme-id="{{ scheme.id }}" style="border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="{% if is_bookmarked %}fas fa-bookmark text-primary{% else %}far fa-bookmark{% endif %}"></i>
+                                        </button>
+                                        
+                                        <!-- Share Buttons -->
+                                        <div class="d-flex gap-1">
+                                            <a href="https://api.whatsapp.com/send?text=Check out the {{ scheme.name }} on SchemeAI! Apply here: {{ scheme.official_link }}" target="_blank" class="btn btn-sm btn-outline-success text-success border-success" title="Share on WhatsApp" style="border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:12px;">
+                                                <i class="fab fa-whatsapp"></i>
+                                            </a>
+                                            <a href="{{ url_for('scheme_details', scheme_id=scheme.id) }}" class="btn btn-primary-custom btn-sm">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

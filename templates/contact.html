@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding bg-light-blue" style="background-color: #F0F6FC; padding-top: 100px; padding-bottom: 50px;">
+    <div class="container text-center">
+        <h1 class="fw-bold mb-2">Contact & Feedback</h1>
+        <p class="text-secondary col-md-6 mx-auto">Have questions, bugs to report, or general feedback about SchemeAI? Get in touch with our team.</p>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Left Info Panel -->
+            <div class="col-lg-5">
+                <div class="card-custom p-4 bg-light border-0 h-100">
+                    <h4 class="mb-4">Get In Touch</h4>
+                    <p class="text-secondary small mb-4">Feel free to reach out via phone, email, or visit our office. We are happy to assist you.</p>
+                    
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="btn-primary-custom rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink:0;">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <span class="text-secondary small d-block">Location</span>
+                                <strong class="text-dark">123 Tech Park, Sector 5, Mumbai, MH, India</strong>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="btn-primary-custom rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink:0;">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <span class="text-secondary small d-block">Call Us</span>
+                                <strong class="text-dark">+91 98765 43210</strong>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="btn-primary-custom rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink:0;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <span class="text-secondary small d-block">Email Support</span>
+                                <strong class="text-dark">contact@schemeai.gov.in</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Google Maps Iframe -->
+                    <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm" style="max-height: 200px;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!11m18!1m12!1m3!1d15082.955403213032!2d72.846561!3d19.07609!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c9113e651771%3A0x6e2b4f9a56c0ef4f!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Form Panel -->
+            <div class="col-lg-7">
+                <div class="card-custom p-4 bg-white">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-paper-plane me-2"></i>Send Feedback Form</h4>
+                    
+                    <form action="{{ url_for('contact') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Your Name *</label>
+                                <input type="text" name="name" class="form-control-custom" placeholder="Name" required
+                                       value="{{ session.get('user_name', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Your Email *</label>
+                                <input type="email" name="email" class="form-control-custom" placeholder="Email Address" required
+                                       value="{{ session.get('user_email', '') }}">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold small">Rate Our Portal (1 - 5 Stars) *</label>
+                                <select name="rating" class="form-select form-control-custom" required>
+                                    <option value="5" selected>⭐⭐⭐⭐⭐ - Outstanding</option>
+                                    <option value="4">⭐⭐⭐⭐ - Very Useful</option>
+                                    <option value="3">⭐⭐⭐ - Good / Average</option>
+                                    <option value="2">⭐⭐ - Needs Improvements</option>
+                                    <option value="1">⭐ - Very Poor</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold small">Message / Feedback *</label>
+                                <textarea name="message" class="form-control-custom" rows="5" placeholder="Tell us about your experience or queries..." required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top d-grid">
+                            <button type="submit" class="btn btn-primary-custom">Submit Feedback</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

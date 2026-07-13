@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Compare Schemes - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding bg-light-blue" style="background-color: #F0F6FC; padding-top: 100px; padding-bottom: 50px;">
+    <div class="container text-center">
+        <h1 class="fw-bold mb-2">Compare Government Schemes</h1>
+        <p class="text-secondary col-md-6 mx-auto">Select up to three schemes side-by-side to compare eligibility rules, limits, benefits, and required application paperwork.</p>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <!-- Selectors Box -->
+        <div class="card-custom p-4 bg-white mb-5">
+            <h5 class="fw-bold mb-3"><i class="fas fa-balance-scale me-2 text-primary"></i>Choose Schemes to Compare</h5>
+            <form action="{{ url_for('compare') }}" method="GET">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label small text-secondary">Scheme A</label>
+                        <select name="s1" class="form-select form-control-custom">
+                            <option value="">-- Choose Scheme --</option>
+                            {% for sc in schemes_list %}
+                                <option value="{{ sc.id }}" {% if s1 and s1.id == sc.id %}selected{% endif %}>{{ sc.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-secondary">Scheme B</label>
+                        <select name="s2" class="form-select form-control-custom">
+                            <option value="">-- Choose Scheme --</option>
+                            {% for sc in schemes_list %}
+                                <option value="{{ sc.id }}" {% if s2 and s2.id == sc.id %}selected{% endif %}>{{ sc.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-secondary">Scheme C</label>
+                        <select name="s3" class="form-select form-control-custom">
+                            <option value="">-- Choose Scheme --</option>
+                            {% for sc in schemes_list %}
+                                <option value="{{ sc.id }}" {% if s3 and s3.id == sc.id %}selected{% endif %}>{{ sc.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end mt-4">
+                    <a href="{{ url_for('compare') }}" class="btn btn-outline-custom me-2">Reset Choices</a>
+                    <button type="submit" class="btn btn-primary-custom px-4">Compare Now</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Comparison Table -->
+        {% if s1 or s2 or s3 %}
+            <div class="card-custom p-4 bg-white overflow-hidden shadow-md">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-custom text-center align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 20%; text-align: left;">Comparison Parameter</th>
+                                <th style="width: 26.6%;">
+                                    {% if s1 %}
+                                        <h5 class="mb-1 text-primary">{{ s1.name }}</h5>
+                                        <span class="badge bg-light text-dark">{{ s1.category }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Scheme A Not Selected</span>
+                                    {% endif %}
+                                </th>
+                                <th style="width: 26.6%;">
+                                    {% if s2 %}
+                                        <h5 class="mb-1 text-primary">{{ s2.name }}</h5>
+                                        <span class="badge bg-light text-dark">{{ s2.category }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Scheme B Not Selected</span>
+                                    {% endif %}
+                                </th>
+                                <th style="width: 26.6%;">
+                                    {% if s3 %}
+                                        <h5 class="mb-1 text-primary">{{ s3.name }}</h5>
+                                        <span class="badge bg-light text-dark">{{ s3.category }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Scheme C Not Selected</span>
+                                    {% endif %}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Department -->
+                            <tr>
+                                <td style="text-align: left;"><strong>Department / Ministry</strong></td>
+                                <td>{{ s1.department if s1 else '-' }}</td>
+                                <td>{{ s2.department if s2 else '-' }}</td>
+                                <td>{{ s3.department if s3 else '-' }}</td>
+                            </tr>
+                            <!-- Type -->
+                            <tr>
+                                <td style="text-align: left;"><strong>Scheme Type</strong></td>
+                                <td>{{ s1.type if s1 else '-' }}</td>
+                                <td>{{ s2.type if s2 else '-' }}</td>
+                                <td>{{ s3.type if s3 else '-' }}</td>
+                            </tr>
+                            <!-- Age bracket -->
+                            <tr>
+                                <td style="text-align: left;"><strong>Target Age Range</strong></td>
+                                <td>{{ s1.min_age if s1 else '-' }} to {% if s1 and s1.max_age >= 100 %}100+{% elif s1 %}{{ s1.max_age }}{% else %}-{% endif %} Yrs</td>
+                                <td>{{ s2.min_age if s2 else '-' }} to {% if s2 and s2.max_age >= 100 %}100+{% elif s2 %}{{ s2.max_age }}{% else %}-{% endif %} Yrs</td>
+                                <td>{{ s3.min_age if s3 else '-' }} to {% if s3 and s3.max_age >= 100 %}100+{% elif s3 %}{{ s3.max_age }}{% else %}-{% endif %} Yrs</td>
+                            </tr>
+                            <!-- Income brackets -->
+                            <tr>
+                                <td style="text-align: left;"><strong>Max Income Limit</strong></td>
+                                <td>{{ '₹' ~ s1.max_income|int if s1 and s1.max_income < 10000000 else ('No Limit' if s1 else '-') }}</td>
+                                <td>{{ '₹' ~ s2.max_income|int if s2 and s2.max_income < 10000000 else ('No Limit' if s2 else '-') }}</td>
+                                <td>{{ '₹' ~ s3.max_income|int if s3 and s3.max_income < 10000000 else ('No Limit' if s3 else '-') }}</td>
+                            </tr>
+                            <!-- Benefits -->
+                            <tr>
+                                <td style="text-align: left;"><strong>Welfare Benefits</strong></td>
+                                <td><div class="small text-secondary text-start">{{ s1.benefits if s1 else '-' }}</div></td>
+                                <td><div class="small text-secondary text-start">{{ s2.benefits if s2 else '-' }}</div></td>
+                                <td><div class="small text-secondary text-start">{{ s3.benefits if s3 else '-' }}</div></td>
+                            </tr>
+                            <!-- Required Documents -->
+                            <tr>
+                                <td style="text-align: left;"><strong>Required Documents</strong></td>
+                                <td>
+                                    {% if s1 %}
+                                        <ul class="list-unstyled small text-secondary text-start" style="padding-left:0;">
+                                            {% for doc in s1.required_documents.split(',') %}
+                                                <li><i class="fas fa-check text-success me-1"></i> {{ doc.strip() }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if s2 %}
+                                        <ul class="list-unstyled small text-secondary text-start" style="padding-left:0;">
+                                            {% for doc in s2.required_documents.split(',') %}
+                                                <li><i class="fas fa-check text-success me-1"></i> {{ doc.strip() }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if s3 %}
+                                        <ul class="list-unstyled small text-secondary text-start" style="padding-left:0;">
+                                            {% for doc in s3.required_documents.split(',') %}
+                                                <li><i class="fas fa-check text-success me-1"></i> {{ doc.strip() }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <!-- Actions -->
+                            <tr>
+                                <td style="text-align: left;"><strong>Actions</strong></td>
+                                <td>
+                                    {% if s1 %}
+                                        <div class="d-grid gap-1">
+                                            <a href="{{ s1.official_link }}" target="_blank" class="btn btn-primary-custom btn-sm">Apply</a>
+                                            <a href="{{ url_for('scheme_details', scheme_id=s1.id) }}" class="btn btn-outline-custom btn-sm">Details</a>
+                                        </div>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if s2 %}
+                                        <div class="d-grid gap-1">
+                                            <a href="{{ s2.official_link }}" target="_blank" class="btn btn-primary-custom btn-sm">Apply</a>
+                                            <a href="{{ url_for('scheme_details', scheme_id=s2.id) }}" class="btn btn-outline-custom btn-sm">Details</a>
+                                        </div>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if s3 %}
+                                        <div class="d-grid gap-1">
+                                            <a href="{{ s3.official_link }}" target="_blank" class="btn btn-primary-custom btn-sm">Apply</a>
+                                            <a href="{{ url_for('scheme_details', scheme_id=s3.id) }}" class="btn btn-outline-custom btn-sm">Details</a>
+                                        </div>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="card-custom p-5 bg-light border-0 text-center d-flex flex-column align-items-center justify-content-center">
+                <i class="fas fa-balance-scale fa-4x text-secondary opacity-50 mb-3"></i>
+                <h4>No Schemes Selected</h4>
+                <p class="text-secondary col-md-6 mt-2">Pick up to three schemes in the cards above and click 'Compare Now' to inspect their criteria specifications side-by-side.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

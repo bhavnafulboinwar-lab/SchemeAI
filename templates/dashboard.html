@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding bg-light-blue" style="background-color: #F0F6FC; padding-top: 100px; padding-bottom: 50px;">
+    <div class="container">
+        <h1 class="fw-bold mb-2">Welcome, {{ user.name }}</h1>
+        <p class="text-secondary mb-0">Manage your profile, saved schemes, recommendation history, and notifications.</p>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Dashboard Sidebar Nav -->
+            <div class="col-lg-3">
+                <div class="card-custom p-3 bg-light border-0">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                        <button class="nav-link nav-link-custom text-start active mb-2" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab"><i class="fas fa-user-cog me-2"></i>My Profile</button>
+                        <button class="nav-link nav-link-custom text-start mb-2" id="v-pills-bookmarks-tab" data-bs-toggle="pill" data-bs-target="#v-pills-bookmarks" type="button" role="tab"><i class="fas fa-bookmark me-2"></i>Saved Schemes ({{ bookmarks|length }})</button>
+                        <button class="nav-link nav-link-custom text-start mb-2" id="v-pills-recommendations-tab" data-bs-toggle="pill" data-bs-target="#v-pills-recommendations" type="button" role="tab"><i class="fas fa-magic me-2"></i>AI Recommendations</button>
+                        <button class="nav-link nav-link-custom text-start mb-2" id="v-pills-history-tab" data-bs-toggle="pill" data-bs-target="#v-pills-history" type="button" role="tab"><i class="fas fa-history me-2"></i>Eligibility History</button>
+                        <button class="nav-link nav-link-custom text-start mb-2" id="v-pills-notifications-tab" data-bs-toggle="pill" data-bs-target="#v-pills-notifications" type="button" role="tab"><i class="fas fa-bell me-2"></i>Notifications</button>
+                        <button class="nav-link nav-link-custom text-start text-danger" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab"><i class="fas fa-trash-alt me-2"></i>Delete Account</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Contents -->
+            <div class="col-lg-9">
+                <div class="tab-content" id="v-pills-tabContent">
+                    
+                    <!-- 1. Profile Edit Tab -->
+                    <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel">
+                        <div class="card-custom p-4 bg-white">
+                            <h4 class="mb-4 text-gradient"><i class="fas fa-user-edit me-2"></i>Edit Profile Details</h4>
+                            
+                            <form action="{{ url_for('update_profile') }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small">Full Name *</label>
+                                        <input type="text" name="name" class="form-control-custom" value="{{ user.name }}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small">Email (Cannot Change)</label>
+                                        <input type="email" class="form-control-custom bg-light" value="{{ user.email }}" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Age (Years)</label>
+                                        <input type="number" name="age" class="form-control-custom" value="{{ user.age or '' }}">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Gender</label>
+                                        <select name="gender" class="form-select form-control-custom">
+                                            <option value="">Select...</option>
+                                            <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                            <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                            <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">State</label>
+                                        <select name="state" class="form-select form-control-custom">
+                                            <option value="">Select...</option>
+                                            <option value="Maharashtra" {% if user.state == 'Maharashtra' %}selected{% endif %}>Maharashtra</option>
+                                            <option value="Delhi" {% if user.state == 'Delhi' %}selected{% endif %}>Delhi</option>
+                                            <option value="Punjab" {% if user.state == 'Punjab' %}selected{% endif %}>Punjab</option>
+                                            <option value="Gujarat" {% if user.state == 'Gujarat' %}selected{% endif %}>Gujarat</option>
+                                            <option value="Karnataka" {% if user.state == 'Karnataka' %}selected{% endif %}>Karnataka</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Occupation</label>
+                                        <select name="occupation" class="form-select form-control-custom">
+                                            <option value="">Select...</option>
+                                            <option value="Student" {% if user.occupation == 'Student' %}selected{% endif %}>Student</option>
+                                            <option value="Farmer" {% if user.occupation == 'Farmer' %}selected{% endif %}>Farmer</option>
+                                            <option value="Business Owner" {% if user.occupation == 'Business Owner' %}selected{% endif %}>Business Owner</option>
+                                            <option value="Unemployed" {% if user.occupation == 'Unemployed' %}selected{% endif %}>Unemployed</option>
+                                            <option value="Private Job" {% if user.occupation == 'Private Job' %}selected{% endif %}>Private Job</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Annual Income (₹)</label>
+                                        <input type="number" name="income" class="form-control-custom" value="{{ user.income|int if user.income else '' }}">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Education Level</label>
+                                        <select name="education" class="form-select form-control-custom">
+                                            <option value="">Select...</option>
+                                            <option value="Below 10th" {% if user.education == 'Below 10th' %}selected{% endif %}>Below 10th</option>
+                                            <option value="10th Pass" {% if user.education == '10th Pass' %}selected{% endif %}>10th Pass</option>
+                                            <option value="12th Pass" {% if user.education == '12th Pass' %}selected{% endif %}>12th Pass</option>
+                                            <option value="Graduate" {% if user.education == 'Graduate' %}selected{% endif %}>Graduate</option>
+                                            <option value="Postgraduate" {% if user.education == 'Postgraduate' %}selected{% endif %}>Postgraduate</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Category</label>
+                                        <select name="category" class="form-select form-control-custom">
+                                            <option value="">Select...</option>
+                                            <option value="General" {% if user.category == 'General' %}selected{% endif %}>General</option>
+                                            <option value="OBC" {% if user.category == 'OBC' %}selected{% endif %}>OBC</option>
+                                            <option value="SC" {% if user.category == 'SC' %}selected{% endif %}>SC</option>
+                                            <option value="ST" {% if user.category == 'ST' %}selected{% endif %}>ST</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">BPL Card Status</label>
+                                        <select name="bpl_status" class="form-select form-control-custom">
+                                            <option value="No" {% if user.bpl_status == 'No' %}selected{% endif %}>APL / None</option>
+                                            <option value="Yes" {% if user.bpl_status == 'Yes' %}selected{% endif %}>BPL Card</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Disability Status</label>
+                                        <select name="disability_status" class="form-select form-control-custom">
+                                            <option value="No" {% if user.disability_status == 'No' %}selected{% endif %}>No</option>
+                                            <option value="Yes" {% if user.disability_status == 'Yes' %}selected{% endif %}>Yes</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 pt-3 border-top d-grid">
+                                    <button type="submit" class="btn btn-primary-custom">Update Profile Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 2. Bookmarked Schemes Tab -->
+                    <div class="tab-pane fade" id="v-pills-bookmarks" role="tabpanel">
+                        <div class="card-custom p-4 bg-white">
+                            <h4 class="mb-4 text-gradient"><i class="fas fa-bookmark me-2"></i>Your Bookmarked Schemes</h4>
+                            {% if bookmarks|length == 0 %}
+                                <div class="text-center py-5">
+                                    <i class="far fa-bookmark fa-3x text-secondary opacity-50 mb-3"></i>
+                                    <p class="text-secondary mb-0">No schemes bookmarked yet. Browse schemes to save them!</p>
+                                    <a href="{{ url_for('schemes') }}" class="btn btn-outline-custom mt-3">Browse Schemes</a>
+                                </div>
+                            {% else %}
+                                <div class="row g-3">
+                                    {% for sc in bookmarks %}
+                                        <div class="col-md-6">
+                                            <div class="card p-3 border-0 bg-light h-100 d-flex flex-column">
+                                                <h5 class="text-primary text-truncate">{{ sc.name }}</h5>
+                                                <p class="small text-secondary flex-grow-1">{{ sc.description[:100] }}...</p>
+                                                <div class="d-flex justify-content-between mt-3 align-items-center">
+                                                    <!-- Bookmark toggle button -->
+                                                    <button class="btn btn-outline-danger btn-sm bookmark-btn active" data-scheme-id="{{ sc.id }}"><i class="fas fa-trash me-1"></i>Remove</button>
+                                                    <a href="{{ url_for('scheme_details', scheme_id=sc.id) }}" class="btn btn-primary-custom btn-sm py-1">View Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- 3. AI Recommendations Tab -->
+                    <div class="tab-pane fade" id="v-pills-recommendations" role="tabpanel">
+                        <div class="card-custom p-4 bg-white">
+                            <h4 class="mb-4 text-gradient"><i class="fas fa-magic me-2"></i>Previous AI Recommendations</h4>
+                            {% if recommendations|length == 0 %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-robot fa-3x text-secondary opacity-50 mb-3"></i>
+                                    <p class="text-secondary mb-0">You have not run the AI recommendation model yet.</p>
+                                    <a href="{{ url_for('recommend') }}" class="btn btn-primary-custom mt-3">Run Model Wizard</a>
+                                </div>
+                            {% else %}
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover align-middle small">
+                                        <thead>
+                                            <tr>
+                                                <th>Date Run</th>
+                                                <th>Input Profile Summary</th>
+                                                <th>Matches Recommended</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for rec in recommendations %}
+                                                <tr>
+                                                    <td>{{ rec.timestamp[:16] }}</td>
+                                                    <td>
+                                                        <span class="text-secondary">Age: {{ rec.inputs.age }} | Inc: ₹{{ rec.inputs.income }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-primary">{{ rec.scheme_count }} Schemes</span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ url_for('recommend') }}" class="btn btn-outline-custom btn-sm py-1">Re-Run</a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- 4. Eligibility History Tab -->
+                    <div class="tab-pane fade" id="v-pills-history" role="tabpanel">
+                        <div class="card-custom p-4 bg-white">
+                            <h4 class="mb-4 text-gradient"><i class="fas fa-history me-2"></i>Eligibility Check Log</h4>
+                            {% if history|length == 0 %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-clipboard-list fa-3x text-secondary opacity-50 mb-3"></i>
+                                    <p class="text-secondary mb-0">No schemes checked recently.</p>
+                                    <a href="{{ url_for('eligibility') }}" class="btn btn-outline-custom mt-3">Verify Schemes</a>
+                                </div>
+                            {% else %}
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover align-middle small">
+                                        <thead>
+                                            <tr>
+                                                <th>Checked Date</th>
+                                                <th>Scheme Name</th>
+                                                <th>Result</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for hist in history %}
+                                                <tr>
+                                                    <td>{{ hist.checked_at[:16] }}</td>
+                                                    <td><strong>{{ hist.scheme_name }}</strong></td>
+                                                    <td>
+                                                        {% if hist.status == 'Eligible' %}
+                                                            <span class="badge bg-success">Eligible</span>
+                                                        {% elif hist.status == 'Partially Eligible' %}
+                                                            <span class="badge bg-warning text-dark">Partially</span>
+                                                        {% else %}
+                                                            <span class="badge bg-danger">Not Eligible</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ url_for('eligibility') }}?scheme_id={{ hist.scheme_id }}" class="btn btn-outline-custom btn-sm py-1">Re-check</a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- 5. Notifications Tab -->
+                    <div class="tab-pane fade" id="v-pills-notifications" role="tabpanel">
+                        <div class="card-custom p-4 bg-white">
+                            <h4 class="mb-4 text-gradient"><i class="fas fa-bell me-2"></i>Your System Inbox</h4>
+                            {% if notifications|length == 0 %}
+                                <div class="text-center py-5">
+                                    <i class="far fa-bell-slash fa-3x text-secondary opacity-50 mb-3"></i>
+                                    <p class="text-secondary mb-0">Inbox is empty. No notifications at this time.</p>
+                                </div>
+                            {% else %}
+                                <div class="d-flex flex-column gap-3">
+                                    {% for notif in notifications %}
+                                        <div class="p-3 rounded border {% if notif.is_read == 0 %}bg-light-blue border-primary{% else %}bg-light{% endif %}">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <h6 class="mb-0 fw-bold">{{ notif.title }}</h6>
+                                                <span class="text-secondary small">{{ notif.created_at[:16] }}</span>
+                                            </div>
+                                            <p class="mb-0 text-secondary small">{{ notif.message }}</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- 6. Account Delete Settings -->
+                    <div class="tab-pane fade" id="v-pills-settings" role="tabpanel">
+                        <div class="card-custom p-4 bg-white border border-danger">
+                            <h4 class="text-danger mb-3"><i class="fas fa-exclamation-triangle me-2"></i>Danger Zone</h4>
+                            <p class="text-secondary small mb-4">Deleting your account is permanent. This will erase your saved bookmarks, recommendations, and eligibility history logs. This action cannot be undone.</p>
+                            
+                            <form action="{{ url_for('delete_account') }}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to delete your account? This action is permanent and cannot be undone.');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+                                <button type="submit" class="btn btn-danger px-4">Permanently Delete Account</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

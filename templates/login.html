@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Login - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding hero-section" style="padding-top: 100px; padding-bottom: 80px; min-height: 80vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-5">
+                <div class="card-custom p-4 bg-white shadow-lg">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-robot text-primary display-6 mb-2"></i>
+                        <h3 class="fw-bold text-gradient">Welcome Back</h3>
+                        <p class="text-secondary small">Access your personalized recommendations and bookmarks</p>
+                    </div>
+
+                    <form action="{{ url_for('login') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+                        
+                        <!-- Role Selector -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary">Login Account Type</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" id="role-user" value="user" checked>
+                                    <label class="form-check-label small" for="role-user">Citizen (User)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" id="role-admin" value="admin">
+                                    <label class="form-check-label small" for="role-admin">System Admin</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Email Address *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-envelope text-secondary"></i></span>
+                                <input type="email" name="email" class="form-control-custom" placeholder="e.g. user@schemeai.com" required style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <label class="form-label fw-bold small">Password *</label>
+                                <a href="{{ url_for('forgot_password') }}" class="small text-secondary text-decoration-underline">Forgot?</a>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-lock text-secondary"></i></span>
+                                <input type="password" name="password" id="login-pass" class="form-control-custom" placeholder="Enter password" required style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary-custom">Sign In</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <span class="text-secondary small">Don't have an account? </span>
+                        <a href="{{ url_for('register') }}" class="small fw-bold">Register Here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block title %}SchemeAI - AI Government Scheme Recommendation System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 hero-content">
+                <h1 data-translate="heroHead">Find the Right Government Scheme in Seconds with AI</h1>
+                <p data-translate="heroDesc">Empowering citizens with personalized machine learning recommendations for central and state welfare benefits.</p>
+                
+                <!-- Search Bar with Voice Search -->
+                <form action="{{ url_for('schemes') }}" method="GET" class="mb-4">
+                    <div class="search-box-container">
+                        <i class="fas fa-search text-secondary ms-2"></i>
+                        <input type="text" name="search" id="hero-search" placeholder="Search Government Schemes..." data-translate="searchPlaceholder">
+                        <button type="button" class="voice-search-btn" data-target="hero-search" title="Voice Search">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button type="submit" class="btn btn-primary-custom px-4 ms-2">Search</button>
+                    </div>
+                </form>
+
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('recommend') }}" class="btn btn-primary-custom" data-translate="findBtn">Find My Scheme</a>
+                    <a href="{{ url_for('about') }}" class="btn btn-outline-custom">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <!-- Modern illustration SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="100%" height="auto">
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8E44AD;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#FFD6E7;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#4A90E2;stop-opacity:0.2" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Background blobs -->
+                    <circle cx="250" cy="200" r="180" fill="url(#grad2)" />
+                    <!-- Main visual shapes -->
+                    <rect x="120" y="100" width="260" height="200" rx="20" fill="white" filter="drop-shadow(0px 10px 20px rgba(0,0,0,0.08))" />
+                    <!-- Visual representing AI interface -->
+                    <rect x="140" y="120" width="220" height="35" rx="10" fill="url(#grad1)" />
+                    <circle cx="165" cy="137.5" r="10" fill="white" />
+                    <line x1="185" y1="137.5" x2="330" y2="137.5" stroke="white" stroke-width="4" stroke-linecap="round" />
+                    <!-- Elements inside illustration -->
+                    <rect x="140" y="170" width="100" height="50" rx="10" fill="#F0F6FC" />
+                    <rect x="260" y="170" width="100" height="50" rx="10" fill="#F0F6FC" />
+                    <rect x="140" y="235" width="220" height="45" rx="10" fill="#F8FBFF" stroke="#4A90E2" stroke-width="1" />
+                    
+                    <circle cx="160" cy="257.5" r="6" fill="#2E8B57" />
+                    <line x1="175" y1="257.5" x2="300" y2="257.5" stroke="#7F8C8D" stroke-width="3" />
+                    
+                    <!-- Small dashboard lines -->
+                    <line x1="150" y1="185" x2="200" y2="185" stroke="#4A90E2" stroke-width="4" />
+                    <line x1="150" y1="195" x2="220" y2="195" stroke="#7F8C8D" stroke-width="3" />
+                    
+                    <line x1="270" y1="185" x2="320" y2="185" stroke="#8E44AD" stroke-width="4" />
+                    <line x1="270" y1="195" x2="340" y2="195" stroke="#7F8C8D" stroke-width="3" />
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Counter -->
+<section class="container mb-5">
+    <div class="stats-section">
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">12+</div>
+                    <div class="stat-label" data-translate="statsSchemes">Total Schemes</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">15,000+</div>
+                    <div class="stat-label" data-translate="statsUsers">Users Helped</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">14</div>
+                    <div class="stat-label" data-translate="statsCat">Categories</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">28+</div>
+                    <div class="stat-label" data-translate="statsStates">States Covered</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title">Explore Welfare Categories</h2>
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-7 g-4">
+            {% for cat in categories %}
+            <div class="col">
+                <a href="{{ url_for('schemes') }}?category={{ cat.name }}">
+                    <div class="card-custom category-card">
+                        <div class="category-icon">
+                            <i class="fas {{ cat.icon }}"></i>
+                        </div>
+                        <h6 class="mt-2 text-dark">{{ cat.name }}</h6>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Popular Schemes Section -->
+<section class="section-padding bg-light-blue" style="background-color: #F0F6FC;">
+    <div class="container">
+        <h2 class="section-title" data-translate="popularSchemes">Popular Government Schemes</h2>
+        <div class="row g-4">
+            {% for scheme in popular_schemes %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card-custom scheme-card bg-white">
+                    <span class="scheme-card-tag">{{ scheme.category }}</span>
+                    <h4 class="mb-3">{{ scheme.name }}</h4>
+                    <p class="text-secondary flex-grow-1">{{ scheme.description[:120] }}...</p>
+                    <div class="scheme-card-meta mb-3">
+                        <span><i class="fas fa-landmark me-1 text-primary"></i> {{ scheme.type }}</span>
+                        <span><i class="fas fa-users me-1 text-primary"></i> Age: {{ scheme.min_age }}+</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-outline-sm bookmark-btn" data-scheme-id="{{ scheme.id }}">
+                            <i class="far fa-bookmark"></i>
+                        </button>
+                        <a href="{{ url_for('scheme_details', scheme_id=scheme.id) }}" class="btn btn-primary-custom btn-sm">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{{ url_for('schemes') }}" class="btn btn-outline-custom">View All Schemes</a>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title" data-translate="howItWorks">How It Works</h2>
+        <div class="row g-4 timeline-custom mt-5">
+            <div class="col-md-6 col-lg-3">
+                <div class="timeline-step">
+                    <div class="timeline-number">1</div>
+                    <h5 class="mt-3" data-translate="step1">Enter Details</h5>
+                    <p class="text-secondary small mt-2" data-translate="step1Desc">Provide your age, income, and occupation profile.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="timeline-step">
+                    <div class="timeline-number">2</div>
+                    <h5 class="mt-3" data-translate="step2">AI Analysis</h5>
+                    <p class="text-secondary small mt-2" data-translate="step2Desc">Our model reviews and predicts eligibility scores.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="timeline-step">
+                    <div class="timeline-number">3</div>
+                    <h5 class="mt-3" data-translate="step3">Get Schemes</h5>
+                    <p class="text-secondary small mt-2" data-translate="step3Desc">Instantly view relevant, ranked government schemes.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="timeline-step">
+                    <div class="timeline-number">4</div>
+                    <h5 class="mt-3" data-translate="step4">Apply Online</h5>
+                    <p class="text-secondary small mt-2" data-translate="step4Desc">Direct links to official application portals.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Carousel -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <h2 class="section-title">What Citizens Say</h2>
+        <div id="testimonialCarousel" class="carousel slide col-md-8 mx-auto mt-4" data-bs-ride="carousel">
+            <div class="carousel-inner text-center">
+                <div class="carousel-item active">
+                    <div class="card-custom p-5 border-0 bg-transparent">
+                        <i class="fas fa-quote-left fa-3x text-primary mb-3 opacity-25"></i>
+                        <p class="fs-5 text-secondary">"SchemeAI helped me find the Post Matric Scholarship in just two clicks. The eligibility checker correctly mapped my caste and family income details."</p>
+                        <h6 class="mt-3 fw-bold">Rahul Sharma</h6>
+                        <span class="text-muted small">Student, Maharashtra</span>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="card-custom p-5 border-0 bg-transparent">
+                        <i class="fas fa-quote-left fa-3x text-primary mb-3 opacity-25"></i>
+                        <p class="fs-5 text-secondary">"As a marginal farmer, navigating government schemes was impossible. The chatbot explained the documents needed for PM-KISAN, and the AI recommended Stand-Up India for my wife's business."</p>
+                        <h6 class="mt-3 fw-bold">Rajesh Patil</h6>
+                        <span class="text-muted small">Farmer, Gujarat</span>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="card-custom p-5 border-0 bg-transparent">
+                        <i class="fas fa-quote-left fa-3x text-primary mb-3 opacity-25"></i>
+                        <p class="fs-5 text-secondary">"The Compare Schemes feature is a lifesaver. I compared three housing subsidies side by side and successfully applied for Pradhan Mantri Awas Yojana."</p>
+                        <h6 class="mt-3 fw-bold">Pooja Nair</h6>
+                        <span class="text-muted small">Homemaker, Karnataka</span>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev text-dark" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                <span class="fas fa-chevron-left" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next text-dark" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                <span class="fas fa-chevron-right" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- FAQs Section -->
+<section class="section-padding">
+    <div class="container col-lg-8">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="accordion faq-accordion" id="faqAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        How does the AI Recommendation work?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        The AI Recommendation uses a Multi-Output Random Forest Classifier trained on profile vectors. By analyzing properties like age, gender, occupation, location, and income, it predicts matching eligibility probabilities for each registered scheme and orders them by highest matching score.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Are the applications processed directly on SchemeAI?
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        No. SchemeAI acts as an intelligent discovery and verification engine. We calculate eligibility and compile your required document checklist, then redirect you to the official government portals via secure application links to finalize submissions.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Is my personal financial data secure?
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, completely. SchemeAI operates with strict session encryptions, hashed user data, and parameterized SQLite models. Your profile inputs are processed temporarily to compute ML scores or saved in your secure user account, depending on your bookmarks preference.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

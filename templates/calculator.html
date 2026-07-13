@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Benefits Calculator - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding bg-light-blue" style="background-color: #F0F6FC; padding-top: 100px; padding-bottom: 50px;">
+    <div class="container text-center">
+        <h1 class="fw-bold mb-2">Benefits & Subsidies Calculator</h1>
+        <p class="text-secondary col-md-6 mx-auto">Select a welfare calculator to estimate your scholarship amounts, pension payouts, business subsidies, or housing assistance grants.</p>
+        
+        <!-- Calculator Selector Dropdown -->
+        <div class="col-md-4 mx-auto mt-4">
+            <select id="calc-type" class="form-select form-control-custom py-2">
+                <option value="scholarship">Scholarship Amount Calculator</option>
+                <option value="pension">Pension Estimate Calculator</option>
+                <option value="subsidy">Subsidy Estimate Calculator</option>
+                <option value="loan">Loan Eligibility Calculator</option>
+                <option value="housing">Housing Assistance Estimator</option>
+            </select>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            
+            <!-- Left inputs columns -->
+            <div class="col-lg-5">
+                
+                <!-- 1. Scholarship Calculator Section -->
+                <div id="scholarship-calc" class="calc-section card-custom p-4 bg-white">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-graduation-cap me-2"></i>Scholarship Estimator</h4>
+                    <form id="scholarship-form">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Annual Family Income *</label>
+                            <input type="number" id="schol-income" class="form-control-custom" placeholder="Total income in ₹" required value="150000">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Education Level *</label>
+                            <select id="schol-edu" class="form-select form-control-custom" required>
+                                <option value="Below 10th">Below 10th</option>
+                                <option value="10th Pass">10th Pass</option>
+                                <option value="12th Pass">12th Pass</option>
+                                <option value="Graduate" selected>Graduate</option>
+                                <option value="Postgraduate">Postgraduate</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Reservation Category *</label>
+                            <select id="schol-cat" class="form-select form-control-custom" required>
+                                <option value="General">General</option>
+                                <option value="OBC">OBC</option>
+                                <option value="SC" selected>SC</option>
+                                <option value="ST">ST</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100 mt-2">Calculate Scholarship</button>
+                    </form>
+                </div>
+
+                <!-- 2. Pension Calculator Section -->
+                <div id="pension-calc" class="calc-section card-custom p-4 bg-white" style="display: none;">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-piggy-bank me-2"></i>Atal Pension Estimator</h4>
+                    <form id="pension-form">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Your Age (Years) *</label>
+                            <input type="number" id="pension-age" class="form-control-custom" placeholder="Entry age (18 to 40)" min="18" max="40" required value="25">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Monthly Contribution Choice (₹) *</label>
+                            <select id="pension-contribution" class="form-select form-control-custom" required>
+                                <option value="42">₹42 / month (For ₹1,000 Pension)</option>
+                                <option value="84">₹84 / month (For ₹2,000 Pension)</option>
+                                <option value="126">₹126 / month (For ₹3,000 Pension)</option>
+                                <option value="168">₹168 / month (For ₹4,000 Pension)</option>
+                                <option value="210" selected>₹210 / month (For ₹5,000 Pension)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100 mt-2">Calculate Pension</button>
+                    </form>
+                </div>
+
+                <!-- 3. Subsidy Calculator Section -->
+                <div id="subsidy-calc" class="calc-section card-custom p-4 bg-white" style="display: none;">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-tags me-2"></i>Subsidy Estimator</h4>
+                    <form id="subsidy-form">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Total Project Cost (₹) *</label>
+                            <input type="number" id="subsidy-cost" class="form-control-custom" placeholder="Project investment" required value="200000">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Welfare Sector *</label>
+                            <select id="subsidy-sector" class="form-select form-control-custom" required>
+                                <option value="Agriculture" selected>Agriculture (Tractor/Subsidies)</option>
+                                <option value="Business">Business / Micro-MSME Loans</option>
+                                <option value="Housing">Housing Assistances</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Social Reservation Category *</label>
+                            <select id="subsidy-cat" class="form-select form-control-custom" required>
+                                <option value="General">General</option>
+                                <option value="OBC">OBC</option>
+                                <option value="SC">SC</option>
+                                <option value="ST" selected>ST</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100 mt-2">Calculate Subsidy</button>
+                    </form>
+                </div>
+
+                <!-- 4. Loan Calculator Section -->
+                <div id="loan-calc" class="calc-section card-custom p-4 bg-white" style="display: none;">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-hand-holding-usd me-2"></i>Mudra Loan Calculator</h4>
+                    <form id="loan-form">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Your Monthly Income (₹) *</label>
+                            <input type="number" id="loan-income" class="form-control-custom" placeholder="Monthly salary or earnings" required value="40000">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Existing Monthly EMIs (₹)</label>
+                            <input type="number" id="loan-emi" class="form-control-custom" placeholder="Paid elsewhere (if any)" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Loan Tenure (Years) *</label>
+                            <select id="loan-tenure" class="form-select form-control-custom" required>
+                                <option value="1">1 Year</option>
+                                <option value="3">3 Years</option>
+                                <option value="5" selected>5 Years</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Interest Rate (% Annual) *</label>
+                            <input type="number" id="loan-rate" class="form-control-custom" step="0.1" value="9.5" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100 mt-2">Calculate Loan Limit</button>
+                    </form>
+                </div>
+
+                <!-- 5. Housing Calculator Section -->
+                <div id="housing-calc" class="calc-section card-custom p-4 bg-white" style="display: none;">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-home me-2"></i>Housing Assistance Estimator</h4>
+                    <form id="housing-form">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Annual Family Income *</label>
+                            <input type="number" id="house-income" class="form-control-custom" placeholder="Household income in ₹" required value="200000">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Residential Location Zone *</label>
+                            <select id="house-location" class="form-select form-control-custom" required>
+                                <option value="Rural" selected>Rural (Gram Panchayat)</option>
+                                <option value="Urban">Urban (Municipality/City)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Economic Card Class (APL/BPL) *</label>
+                            <select id="house-bpl" class="form-select form-control-custom" required>
+                                <option value="Yes" selected>BPL (Below Poverty Line)</option>
+                                <option value="No">APL (Above Poverty Line)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100 mt-2">Calculate Grant</button>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- Right results columns -->
+            <div class="col-lg-5">
+                
+                <!-- Scholarship Results -->
+                <div id="scholarship-result" class="calc-result-box card-custom p-4 bg-white h-100 text-center" style="display: none;">
+                    <h5 class="fw-bold mb-4">Scholarship Estimate Result</h5>
+                    <div class="display-6 fw-bold text-success mb-2" id="schol-result-total">₹0</div>
+                    <p class="text-secondary small mb-4">Estimated total annual scholarship allowance</p>
+                    
+                    <div class="row g-2 text-start border-top pt-3 mb-4">
+                        <div class="col-6 text-secondary small">Base Fee Waiver:</div>
+                        <div class="col-6 fw-bold text-end" id="schol-result-base">₹0</div>
+                        <div class="col-6 text-secondary small">Maintenance Allowance:</div>
+                        <div class="col-6 fw-bold text-end" id="schol-result-allowance">₹0</div>
+                    </div>
+                    
+                    <div>
+                        <canvas id="scholChart" style="max-height: 220px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pension Results -->
+                <div id="pension-result" class="calc-result-box card-custom p-4 bg-white h-100 text-center" style="display: none;">
+                    <h5 class="fw-bold mb-4">Atal Pension Projection</h5>
+                    <div class="display-6 fw-bold text-primary mb-2" id="pension-result-monthly">₹0</div>
+                    <p class="text-secondary small mb-4">Guaranteed monthly pension after age 60</p>
+                    
+                    <div class="row g-2 text-start border-top pt-3 mb-4">
+                        <div class="col-6 text-secondary small">Total Principal Invested:</div>
+                        <div class="col-6 fw-bold text-end" id="pension-result-contrib">₹0</div>
+                        <div class="col-6 text-secondary small">Projected Maturity Pool:</div>
+                        <div class="col-6 fw-bold text-end" id="pension-result-pool">₹0</div>
+                    </div>
+                    
+                    <div>
+                        <canvas id="pensionChart" style="max-height: 220px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Subsidy Results -->
+                <div id="subsidy-result" class="calc-result-box card-custom p-4 bg-white h-100 text-center" style="display: none;">
+                    <h5 class="fw-bold mb-4">Estimated Government Subsidy</h5>
+                    <div class="display-6 fw-bold text-success mb-2" id="subsidy-result-amount">₹0</div>
+                    <p class="text-secondary small mb-4">Total welfare grant share covering project cost</p>
+                    
+                    <div class="row g-2 text-start border-top pt-3 mb-4">
+                        <div class="col-6 text-secondary small">Subsidy Share Ratio:</div>
+                        <div class="col-6 fw-bold text-end" id="subsidy-result-percent">0%</div>
+                        <div class="col-6 text-secondary small">Applicant Funding Share:</div>
+                        <div class="col-6 fw-bold text-end" id="subsidy-result-own">₹0</div>
+                    </div>
+                    
+                    <div>
+                        <canvas id="subsidyChart" style="max-height: 220px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Loan Results -->
+                <div id="loan-result" class="calc-result-box card-custom p-4 bg-white h-100 text-center" style="display: none;">
+                    <h5 class="fw-bold mb-4">Mudra Loan Eligibility</h5>
+                    <div class="display-6 fw-bold text-primary mb-2" id="loan-result-eligible">₹0</div>
+                    <p class="text-secondary small mb-4">Maximum eligible business loan amount</p>
+                    
+                    <div class="row g-2 text-start border-top pt-3 mb-4">
+                        <div class="col-6 text-secondary small">Calculated Monthly EMI:</div>
+                        <div class="col-6 fw-bold text-end" id="loan-result-emi">₹0</div>
+                    </div>
+                    
+                    <div>
+                        <canvas id="loanChart" style="max-height: 220px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Housing Results -->
+                <div id="house-result" class="calc-result-box card-custom p-4 bg-white h-100 text-center" style="display: none;">
+                    <h5 class="fw-bold mb-4">PMAY Housing Assistance</h5>
+                    <div class="display-6 fw-bold text-success mb-2" id="house-result-grant">₹0</div>
+                    <p class="text-secondary small mb-4">Total government grant support</p>
+                    
+                    <div class="row g-2 text-start border-top pt-3 mb-4">
+                        <div class="col-6 text-secondary small">Eligibility Category:</div>
+                        <div class="col-6 fw-bold text-end" id="house-result-status">Checking...</div>
+                    </div>
+                    
+                    <div>
+                        <canvas id="housingChart" style="max-height: 220px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Empty placeholder state -->
+                <div id="calc-placeholder" class="card-custom p-4 bg-light border-0 h-100 text-center d-flex flex-column justify-content-center align-items-center">
+                    <i class="fas fa-calculator fa-4x text-secondary opacity-50 mb-3"></i>
+                    <h4>Awaiting Inputs</h4>
+                    <p class="text-secondary col-md-8 mx-auto mt-2">Adjust input parameters on the left and click 'Calculate' to see estimated welfare figures.</p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/calculator.js') }}"></script>
+<script>
+    // Trigger initial calculator show to sync with default select option
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("calc-type").dispatchEvent(new Event("change"));
+        // Remove empty state block when calculations run
+        document.querySelectorAll("form").forEach(form => {
+            form.addEventListener("submit", () => {
+                document.getElementById("calc-placeholder").style.display = "none";
+            });
+        });
+    });
+</script>
+{% endblock %}

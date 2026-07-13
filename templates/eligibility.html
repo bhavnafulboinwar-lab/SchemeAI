@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Eligibility Checker - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding bg-light-blue" style="background-color: #F0F6FC; padding-top: 100px; padding-bottom: 50px;">
+    <div class="container text-center">
+        <h1 class="fw-bold mb-2">Scheme Eligibility Checker</h1>
+        <p class="text-secondary col-md-6 mx-auto">Select a scheme and enter your details to verify if you satisfy the exact central or state criteria rules.</p>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Form Card -->
+            <div class="col-lg-6">
+                <div class="card-custom p-4 bg-white">
+                    <h4 class="mb-4 text-gradient"><i class="fas fa-check-double me-2"></i>Verify Eligibility Parameters</h4>
+                    
+                    <form action="{{ url_for('eligibility') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+                        
+                        <!-- Scheme Dropdown Selector -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Select Government Scheme *</label>
+                            <select name="scheme_id" class="form-select form-control-custom" required>
+                                <option value="">Choose a scheme to check...</option>
+                                {% for sc in schemes_list %}
+                                    <option value="{{ sc.id }}" {% if selected_scheme and selected_scheme.id == sc.id %}selected{% endif %}>{{ sc.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Your Age (Years) *</label>
+                                <input type="number" name="age" class="form-control-custom" placeholder="e.g. 25" required
+                                       value="{{ profile.age if profile else '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Your Gender *</label>
+                                <select name="gender" class="form-select form-control-custom" required>
+                                    <option value="Male" {% if profile and profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                                    <option value="Female" {% if profile and profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                                    <option value="Other" {% if profile and profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Your State *</label>
+                                <select name="state" class="form-select form-control-custom" required>
+                                    <option value="Maharashtra" {% if profile and profile.state == 'Maharashtra' %}selected{% endif %}>Maharashtra</option>
+                                    <option value="Delhi" {% if profile and profile.state == 'Delhi' %}selected{% endif %}>Delhi</option>
+                                    <option value="Punjab" {% if profile and profile.state == 'Punjab' %}selected{% endif %}>Punjab</option>
+                                    <option value="Gujarat" {% if profile and profile.state == 'Gujarat' %}selected{% endif %}>Gujarat</option>
+                                    <option value="Karnataka" {% if profile and profile.state == 'Karnataka' %}selected{% endif %}>Karnataka</option>
+                                    <option value="Uttar Pradesh" {% if profile and profile.state == 'Uttar Pradesh' %}selected{% endif %}>Uttar Pradesh</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Primary Occupation *</label>
+                                <select name="occupation" class="form-select form-control-custom" required>
+                                    <option value="Student" {% if profile and profile.occupation == 'Student' %}selected{% endif %}>Student</option>
+                                    <option value="Farmer" {% if profile and profile.occupation == 'Farmer' %}selected{% endif %}>Farmer</option>
+                                    <option value="Business Owner" {% if profile and profile.occupation == 'Business Owner' %}selected{% endif %}>Business Owner</option>
+                                    <option value="Unemployed" {% if profile and profile.occupation == 'Unemployed' %}selected{% endif %}>Unemployed</option>
+                                    <option value="Private Job" {% if profile and profile.occupation == 'Private Job' %}selected{% endif %}>Private Job</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Annual Income (₹) *</label>
+                                <input type="number" name="income" class="form-control-custom" placeholder="Annual household income" required
+                                       value="{{ profile.income|int if profile and profile.income else '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Economic Card Class (APL/BPL) *</label>
+                                <select name="bpl_status" class="form-select form-control-custom" required>
+                                    <option value="No" {% if profile and profile.bpl_status == 'No' %}selected{% endif %}>APL (Above Poverty Line / None)</option>
+                                    <option value="Yes" {% if profile and profile.bpl_status == 'Yes' %}selected{% endif %}>BPL (Below Poverty Line)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Disability Status *</label>
+                                <select name="disability_status" class="form-select form-control-custom" required>
+                                    <option value="No" {% if profile and profile.disability_status == 'No' %}selected{% endif %}>No (Not Specially Abled)</option>
+                                    <option value="Yes" {% if profile and profile.disability_status == 'Yes' %}selected{% endif %}>Yes (Specially Abled)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Education Level *</label>
+                                <select name="education" class="form-select form-control-custom" required>
+                                    <option value="Below 10th" {% if profile and profile.education == 'Below 10th' %}selected{% endif %}>Below 10th</option>
+                                    <option value="10th Pass" {% if profile and profile.education == '10th Pass' %}selected{% endif %}>10th Pass</option>
+                                    <option value="12th Pass" {% if profile and profile.education == '12th Pass' %}selected{% endif %}>12th Pass</option>
+                                    <option value="Graduate" {% if profile and profile.education == 'Graduate' %}selected{% endif %}>Graduate</option>
+                                    <option value="Postgraduate" {% if profile and profile.education == 'Postgraduate' %}selected{% endif %}>Postgraduate</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top d-grid">
+                            <button type="submit" class="btn btn-primary-custom">Check Eligibility Status</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Result Card -->
+            <div class="col-lg-6">
+                {% if eligibility_result %}
+                    <div class="card-custom p-4 bg-white h-100">
+                        <h4 class="mb-4">Assessment Outcomes</h4>
+                        
+                        <div class="text-center py-4 mb-4 rounded border" style="background: rgba(74,144,226,0.02);">
+                            <h5 class="text-secondary">Scheme Selected:</h5>
+                            <h4 class="text-primary mt-1">{{ selected_scheme.name }}</h4>
+                            
+                            <div class="mt-4">
+                                {% if eligibility_result.status == 'Eligible' %}
+                                    <div class="badge bg-success px-4 py-2 fs-5"><i class="fas fa-check-circle me-2"></i>Fully Eligible</div>
+                                    <p class="text-success mt-3 mb-0">Excellent! You satisfy all verification limits for this scheme.</p>
+                                {% elif eligibility_result.status == 'Partially Eligible' %}
+                                    <div class="badge bg-warning text-dark px-4 py-2 fs-5"><i class="fas fa-exclamation-circle me-2"></i>Partially Eligible</div>
+                                    <p class="text-warning mt-3 mb-0">You satisfy most rules, but fail on some secondary parameters.</p>
+                                {% else %}
+                                    <div class="badge bg-danger px-4 py-2 fs-5"><i class="fas fa-times-circle me-2"></i>Not Eligible</div>
+                                    <p class="text-danger mt-3 mb-0">You fail on one or more mandatory eligibility constraints.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <h5 class="fw-bold mb-3">Criteria Scorecard Details</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Your Input</th>
+                                        <th>Target Rule</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for score in eligibility_result.scorecard %}
+                                        <tr>
+                                            <td><strong>{{ score.name }}</strong></td>
+                                            <td>{{ score.user }}</td>
+                                            <td>{{ score.required }}</td>
+                                            <td>
+                                                {% if score.status == 'Match' %}
+                                                    <span class="badge bg-success"><i class="fas fa-check"></i></span>
+                                                {% else %}
+                                                    <span class="badge bg-danger"><i class="fas fa-times"></i></span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {% if eligibility_result.status == 'Eligible' or eligibility_result.status == 'Partially Eligible' %}
+                            <div class="mt-4 pt-3 border-top d-flex gap-2">
+                                <a href="{{ selected_scheme.official_link }}" target="_blank" class="btn btn-primary-custom w-100">
+                                    <i class="fas fa-external-link-alt me-2"></i>Go to Official Portal
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="card-custom p-4 bg-light border-0 text-center d-flex flex-column justify-content-center align-items-center h-100">
+                        <i class="fas fa-user-check fa-4x text-secondary opacity-50 mb-3"></i>
+                        <h4>Awaiting Assessment</h4>
+                        <p class="text-secondary col-md-8 mx-auto mt-2">Fill in your details in the verification form and hit 'Check Eligibility' to run criteria diagnostics.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

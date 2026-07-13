@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Register - SchemeAI{% endblock %}
+
+{% block content %}
+<section class="section-padding hero-section" style="padding-top: 100px; padding-bottom: 80px; min-height: 80vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card-custom p-4 bg-white shadow-lg">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus text-primary display-6 mb-2"></i>
+                        <h3 class="fw-bold text-gradient">Create Citizen Account</h3>
+                        <p class="text-secondary small">Register to save bookmarks, check AI recommendations, and build eligibility checklists</p>
+                    </div>
+
+                    <form action="{{ url_for('register') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+                        
+                        <div class="row g-3">
+                            <h5 class="fw-bold text-primary mt-2">1. Access Credentials</h5>
+                            
+                            <!-- Name -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Full Name *</label>
+                                <input type="text" name="name" class="form-control-custom" placeholder="Full Name" required>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Email Address *</label>
+                                <input type="email" name="email" class="form-control-custom" placeholder="e.g. name@email.com" required>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Password *</label>
+                                <input type="password" name="password" class="form-control-custom" placeholder="Enter password" required>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Confirm Password *</label>
+                                <input type="password" name="confirm_password" class="form-control-custom" placeholder="Confirm password" required>
+                            </div>
+
+                            <hr class="my-4">
+                            
+                            <h5 class="fw-bold text-primary">2. Personal Profile details (Prefills AI Forms)</h5>
+                            
+                            <!-- Age -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Age (Years)</label>
+                                <input type="number" name="age" class="form-control-custom" placeholder="e.g. 25" min="1" max="120">
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Gender</label>
+                                <select name="gender" class="form-select form-control-custom">
+                                    <option value="">Choose...</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- State -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">State</label>
+                                <select name="state" class="form-select form-control-custom">
+                                    <option value="">Choose...</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                </select>
+                            </div>
+
+                            <!-- Occupation -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Occupation</label>
+                                <select name="occupation" class="form-select form-control-custom">
+                                    <option value="">Choose...</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Farmer">Farmer</option>
+                                    <option value="Business Owner">Business Owner</option>
+                                    <option value="Unemployed">Unemployed</option>
+                                    <option value="Private Job">Private Sector Job</option>
+                                </select>
+                            </div>
+
+                            <!-- Annual Income -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Annual Income (₹)</label>
+                                <input type="number" name="income" class="form-control-custom" placeholder="Annual household income">
+                            </div>
+
+                            <!-- Education -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Education Level</label>
+                                <select name="education" class="form-select form-control-custom">
+                                    <option value="">Choose...</option>
+                                    <option value="Below 10th">Below 10th</option>
+                                    <option value="10th Pass">10th Pass</option>
+                                    <option value="12th Pass">12th Pass</option>
+                                    <option value="Graduate">Graduate</option>
+                                    <option value="Postgraduate">Postgraduate</option>
+                                </select>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Reservation Category</label>
+                                <select name="category" class="form-select form-control-custom">
+                                    <option value="">Choose...</option>
+                                    <option value="General">General</option>
+                                    <option value="OBC">OBC</option>
+                                    <option value="SC">SC</option>
+                                    <option value="ST">ST</option>
+                                </select>
+                            </div>
+
+                            <!-- BPL card -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">BPL Card Status</label>
+                                <select name="bpl_status" class="form-select form-control-custom">
+                                    <option value="No">No (APL / None)</option>
+                                    <option value="Yes">Yes (BPL / Antyodaya)</option>
+                                </select>
+                            </div>
+
+                            <!-- Disability -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Disability Status</label>
+                                <select name="disability_status" class="form-select form-control-custom">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary-custom">Register Profile</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <span class="text-secondary small">Already have an account? </span>
+                        <a href="{{ url_for('login') }}" class="small fw-bold">Login Here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
