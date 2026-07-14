@@ -963,13 +963,8 @@ def api_recommend():
     except Exception as e:
         return jsonify({"message": f"AI evaluation error: {str(e)}"}, 500)
 
-<<<<<<< HEAD
 import os
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
-=======
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
->>>>>>> abbb46b9403a7b6d6469c88ce54e92b41932035c
